@@ -1,0 +1,134 @@
+// RFC-GW01 Lava Crossing Grid World — Finite State Machine
+// ==========================================================
+// Derived from specification v2.3 and gridworld.py implementation.
+// States:  12 reachable from s_0 = (row=1, col=0, door_status=LOCKED).
+//          6 states pruned as unreachable:
+//            (0,2,L), (0,2,U), (1,1,L), (1,2,L), (2,2,L), (2,2,U)
+// Actions: MOVE_NORTH | MOVE_SOUTH | MOVE_WEST | MOVE_EAST
+//          SUBMIT_KEY_correct | SUBMIT_KEY_wrong
+//          (available only when (row,col)=(1,0); all moves always available)
+// Terminals: T_* nodes are absorbing — no outgoing edges.
+//   LAVA  → reward −1, done=True
+//   GOAL  → reward +1, done=True
+// Rewards on all non-terminal transitions: 0.
+// ==========================================================
+
+digraph GridWorld_FSM {
+
+    // ── Graph-level styling ──────────────────────────────────────────
+    graph [
+        rankdir    = LR,
+        fontname   = "Helvetica",
+        fontsize   = 11,
+        label      = "RFC-GW01 Lava Crossing Grid World FSM\n(reachable states only; coarse action abstraction)",
+        labelloc   = "t",
+        nodesep    = 0.6,
+        ranksep    = 1.0
+    ]
+    node  [fontname="Helvetica", fontsize=10, shape=ellipse, style=filled]
+    edge  [fontname="Helvetica", fontsize=9]
+
+    // ── Initial-state marker ─────────────────────────────────────────
+    __start__ [label="", shape=point, style=invis, width=0]
+
+    // ── Non-terminal states ──────────────────────────────────────────
+    // LOCKED corridor (col=0, door locked): door is impassable
+    S10L [label="(1,0)\nLOCKED\n[START]",  fillcolor="#AED6F1", color="#2980B9"]
+    S00L [label="(0,0)\nLOCKED",           fillcolor="#D6EAF8", color="#2980B9"]
+    S20L [label="(2,0)\nLOCKED",           fillcolor="#D6EAF8", color="#2980B9"]
+
+    // UNLOCKED corridor (col=0, door open): passage to door tile possible
+    S10U [label="(1,0)\nUNLOCKED",         fillcolor="#A9DFBF", color="#1E8449"]
+    S00U [label="(0,0)\nUNLOCKED",         fillcolor="#D5F5E3", color="#1E8449"]
+    S20U [label="(2,0)\nUNLOCKED",         fillcolor="#D5F5E3", color="#1E8449"]
+
+    // Door tile (only reachable when UNLOCKED)
+    S11U [label="(1,1)\nUNLOCKED\n[DOOR]", fillcolor="#F9E79F", color="#D4AC0D"]
+
+    // ── Terminal states ──────────────────────────────────────────────
+    node [shape=doubleoctagon]
+
+    // Lava terminals — reward −1
+    T01L [label="(0,1) LAVA\nLOCKED\nr=−1 done", fillcolor="#F1948A", color="#C0392B"]
+    T01U [label="(0,1) LAVA\nUNLOCKED\nr=−1 done", fillcolor="#F1948A", color="#C0392B"]
+    T21L [label="(2,1) LAVA\nLOCKED\nr=−1 done", fillcolor="#F1948A", color="#C0392B"]
+    T21U [label="(2,1) LAVA\nUNLOCKED\nr=−1 done", fillcolor="#F1948A", color="#C0392B"]
+
+    // Goal terminal — reward +1
+    T12U [label="(1,2) GOAL\nUNLOCKED\nr=+1 done", fillcolor="#82E0AA", color="#1E8449"]
+
+    // ── Initial-state arrow ──────────────────────────────────────────
+    __start__ -> S10L [label="s₀", style=bold, color="#2980B9"]
+
+    // ════════════════════════════════════════════════════════════════
+    // TRANSITIONS
+    // Spec §6.1 movement cases; §6.2 key-submission cases; §6.3 door.
+    // Self-loops encode wall-bounce (§6.1 Case 1): agent stays put, r=0.
+    // ════════════════════════════════════════════════════════════════
+
+    // ── S10L : (1,0) LOCKED ─────────────────────────────────────────
+    // §6.1 Case 1 — WEST hits boundary wall; EAST hits locked DOOR
+    S10L -> S10L [label="MOVE_WEST\n(wall-bounce)", style=dashed, color="#999999"]
+    S10L -> S10L [label="MOVE_EAST\n(door locked)", style=dashed, color="#999999"]
+    S10L -> S00L [label="MOVE_NORTH"]
+    S10L -> S20L [label="MOVE_SOUTH"]
+    // §6.2 — key submission available only at (1,0)
+    S10L -> S10L [label="SUBMIT_KEY_wrong\n(re-lock)", style=dashed, color="#999999"]
+    S10L -> S10U [label="SUBMIT_KEY_correct\n(unlock door)", color="#1E8449", style=bold]
+
+    // ── S10U : (1,0) UNLOCKED ────────────────────────────────────────
+    // §6.1 Case 1 — WEST hits boundary wall; door now open
+    S10U -> S10U [label="MOVE_WEST\n(wall-bounce)", style=dashed, color="#999999"]
+    S10U -> S11U [label="MOVE_EAST\n(door open)"]
+    S10U -> S00U [label="MOVE_NORTH"]
+    S10U -> S20U [label="MOVE_SOUTH"]
+    // §6.2 — idempotent correct; wrong key re-locks (§6.2 Case 1)
+    S10U -> S10U [label="SUBMIT_KEY_correct\n(stay unlocked)", style=dashed, color="#1E8449"]
+    S10U -> S10L [label="SUBMIT_KEY_wrong\n(re-lock!)", color="#C0392B", style=bold]
+
+    // ── S00L : (0,0) LOCKED ──────────────────────────────────────────
+    // §6.1 — NORTH/WEST hit boundary walls
+    S00L -> S00L [label="MOVE_NORTH\n(wall-bounce)", style=dashed, color="#999999"]
+    S00L -> S00L [label="MOVE_WEST\n(wall-bounce)",  style=dashed, color="#999999"]
+    S00L -> S10L [label="MOVE_SOUTH"]
+    // §6.1 Case 3 — EAST into lava at (0,1)
+    S00L -> T01L [label="MOVE_EAST\n(→ LAVA r=−1)", color="#C0392B", style=bold]
+
+    // ── S00U : (0,0) UNLOCKED ────────────────────────────────────────
+    S00U -> S00U [label="MOVE_NORTH\n(wall-bounce)", style=dashed, color="#999999"]
+    S00U -> S00U [label="MOVE_WEST\n(wall-bounce)",  style=dashed, color="#999999"]
+    S00U -> S10U [label="MOVE_SOUTH"]
+    S00U -> T01U [label="MOVE_EAST\n(→ LAVA r=−1)", color="#C0392B", style=bold]
+
+    // ── S20L : (2,0) LOCKED ──────────────────────────────────────────
+    // §6.1 — SOUTH/WEST hit boundary walls
+    S20L -> S20L [label="MOVE_SOUTH\n(wall-bounce)", style=dashed, color="#999999"]
+    S20L -> S20L [label="MOVE_WEST\n(wall-bounce)",  style=dashed, color="#999999"]
+    S20L -> S10L [label="MOVE_NORTH"]
+    // §6.1 Case 3 — EAST into lava at (2,1)
+    S20L -> T21L [label="MOVE_EAST\n(→ LAVA r=−1)", color="#C0392B", style=bold]
+
+    // ── S20U : (2,0) UNLOCKED ────────────────────────────────────────
+    S20U -> S20U [label="MOVE_SOUTH\n(wall-bounce)", style=dashed, color="#999999"]
+    S20U -> S20U [label="MOVE_WEST\n(wall-bounce)",  style=dashed, color="#999999"]
+    S20U -> S10U [label="MOVE_NORTH"]
+    S20U -> T21U [label="MOVE_EAST\n(→ LAVA r=−1)", color="#C0392B", style=bold]
+
+    // ── S11U : (1,1) UNLOCKED [DOOR TILE] ────────────────────────────
+    // §6.3 / §6.1 — door tile traversable when UNLOCKED
+    // §6.1 Case 3 — NORTH into lava (0,1); SOUTH into lava (2,1)
+    S11U -> T01U [label="MOVE_NORTH\n(→ LAVA r=−1)", color="#C0392B", style=bold]
+    S11U -> T21U [label="MOVE_SOUTH\n(→ LAVA r=−1)", color="#C0392B", style=bold]
+    S11U -> S10U [label="MOVE_WEST"]
+    // §6.1 Case 4 — EAST into goal (1,2)
+    S11U -> T12U [label="MOVE_EAST\n(→ GOAL r=+1)", color="#1E8449", style=bold]
+
+    // ── Terminal states — absorbing, no outgoing edges ────────────────
+    // (T01L, T01U, T21L, T21U, T12U have no transitions per §8 episode end)
+
+    // ── Subgraph layout hints ─────────────────────────────────────────
+    { rank=same; S00L; S00U }
+    { rank=same; S10L; S10U }
+    { rank=same; S20L; S20U }
+    { rank=same; T01L; T01U; T21L; T21U }
+}

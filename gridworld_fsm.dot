@@ -1,0 +1,143 @@
+digraph RFC_GW01_LavaCrossing {
+    // -------------------------------------------------------
+    // Graph attributes
+    // -------------------------------------------------------
+    graph [
+        label     = "RFC-GW01 Lava Crossing FSM\n(reachable states only, coarse action abstraction)",
+        labelloc  = "t",
+        fontname  = "Helvetica",
+        fontsize  = 14,
+        rankdir   = LR,
+        nodesep   = 0.6,
+        ranksep   = 1.0
+    ];
+    node [fontname="Helvetica", fontsize=11];
+    edge [fontname="Helvetica", fontsize=10];
+
+    // -------------------------------------------------------
+    // Invisible start arrow
+    // -------------------------------------------------------
+    __init__ [style=invis, width=0, height=0, label=""];
+    __init__ -> S_1_0_L;
+
+    // -------------------------------------------------------
+    // Non-terminal states  (single circle)
+    // -------------------------------------------------------
+    S_1_0_L [label="(1,0)\nLOCKED",    shape=circle,        style=filled, fillcolor="#cce5ff"];
+    S_1_0_U [label="(1,0)\nUNLOCKED",  shape=circle,        style=filled, fillcolor="#d4edda"];
+    S_0_0_L [label="(0,0)\nLOCKED",    shape=circle,        style=filled, fillcolor="#cce5ff"];
+    S_0_0_U [label="(0,0)\nUNLOCKED",  shape=circle,        style=filled, fillcolor="#d4edda"];
+    S_2_0_L [label="(2,0)\nLOCKED",    shape=circle,        style=filled, fillcolor="#cce5ff"];
+    S_2_0_U [label="(2,0)\nUNLOCKED",  shape=circle,        style=filled, fillcolor="#d4edda"];
+    S_1_1_U [label="(1,1)\nUNLOCKED",  shape=circle,        style=filled, fillcolor="#d4edda"];
+
+    // -------------------------------------------------------
+    // Terminal sink states  (double circle)
+    // -------------------------------------------------------
+    T_LAVA_0_1_L [label="(0,1)\nLOCKED\n[LAVA]",   shape=doublecircle, style=filled, fillcolor="#f8d7da"];
+    T_LAVA_0_1_U [label="(0,1)\nUNLOCKED\n[LAVA]", shape=doublecircle, style=filled, fillcolor="#f8d7da"];
+    T_LAVA_2_1_L [label="(2,1)\nLOCKED\n[LAVA]",   shape=doublecircle, style=filled, fillcolor="#f8d7da"];
+    T_LAVA_2_1_U [label="(2,1)\nUNLOCKED\n[LAVA]", shape=doublecircle, style=filled, fillcolor="#f8d7da"];
+    T_GOAL_1_2_U [label="(1,2)\nUNLOCKED\n[GOAL]", shape=doublecircle, style=filled, fillcolor="#fff3cd"];
+
+    // -------------------------------------------------------
+    // Transitions FROM  S_1_0_L  — Start / LOCKED
+    //   MOVE_NORTH  -> S_0_0_L
+    //   MOVE_SOUTH  -> S_2_0_L
+    //   MOVE_WEST   -> S_1_0_L  (wall-loop, out-of-bounds)
+    //   MOVE_EAST   -> S_1_0_L  (wall-loop, door LOCKED)
+    //   SUBMIT_KEY_OK    -> S_1_0_U
+    //   SUBMIT_KEY_WRONG -> S_1_0_L  (self-loop)
+    // -------------------------------------------------------
+    S_1_0_L -> S_0_0_L      [label="MOVE_NORTH"];
+    S_1_0_L -> S_2_0_L      [label="MOVE_SOUTH"];
+    S_1_0_L -> S_1_0_L      [label="MOVE_WEST\n(wall-loop)"];
+    S_1_0_L -> S_1_0_L      [label="MOVE_EAST\n(door locked)"];
+    S_1_0_L -> S_1_0_U      [label="SUBMIT_KEY_OK"];
+    S_1_0_L -> S_1_0_L      [label="SUBMIT_KEY_WRONG"];
+
+    // -------------------------------------------------------
+    // Transitions FROM  S_1_0_U  — Start / UNLOCKED
+    //   MOVE_NORTH  -> S_0_0_U
+    //   MOVE_SOUTH  -> S_2_0_U
+    //   MOVE_WEST   -> S_1_0_U  (wall-loop)
+    //   MOVE_EAST   -> S_1_1_U  (door UNLOCKED, enters door tile)
+    //   SUBMIT_KEY_OK    -> S_1_0_U  (self-loop, stays UNLOCKED)
+    //   SUBMIT_KEY_WRONG -> S_1_0_L  (re-lock)
+    // -------------------------------------------------------
+    S_1_0_U -> S_0_0_U      [label="MOVE_NORTH"];
+    S_1_0_U -> S_2_0_U      [label="MOVE_SOUTH"];
+    S_1_0_U -> S_1_0_U      [label="MOVE_WEST\n(wall-loop)"];
+    S_1_0_U -> S_1_1_U      [label="MOVE_EAST\n(door open)"];
+    S_1_0_U -> S_1_0_U      [label="SUBMIT_KEY_OK"];
+    S_1_0_U -> S_1_0_L      [label="SUBMIT_KEY_WRONG\n(re-lock)"];
+
+    // -------------------------------------------------------
+    // Transitions FROM  S_0_0_L
+    //   MOVE_NORTH  -> S_0_0_L  (wall-loop)
+    //   MOVE_WEST   -> S_0_0_L  (wall-loop)
+    //   MOVE_SOUTH  -> S_1_0_L
+    //   MOVE_EAST   -> T_LAVA_0_1_L  (lava, terminal)
+    // -------------------------------------------------------
+    S_0_0_L -> S_0_0_L      [label="MOVE_NORTH\n(wall-loop)"];
+    S_0_0_L -> S_0_0_L      [label="MOVE_WEST\n(wall-loop)"];
+    S_0_0_L -> S_1_0_L      [label="MOVE_SOUTH"];
+    S_0_0_L -> T_LAVA_0_1_L [label="MOVE_EAST\n[r=-1]", color=red, fontcolor=red];
+
+    // -------------------------------------------------------
+    // Transitions FROM  S_0_0_U
+    //   MOVE_NORTH  -> S_0_0_U  (wall-loop)
+    //   MOVE_WEST   -> S_0_0_U  (wall-loop)
+    //   MOVE_SOUTH  -> S_1_0_U
+    //   MOVE_EAST   -> T_LAVA_0_1_U  (lava, terminal)
+    // -------------------------------------------------------
+    S_0_0_U -> S_0_0_U      [label="MOVE_NORTH\n(wall-loop)"];
+    S_0_0_U -> S_0_0_U      [label="MOVE_WEST\n(wall-loop)"];
+    S_0_0_U -> S_1_0_U      [label="MOVE_SOUTH"];
+    S_0_0_U -> T_LAVA_0_1_U [label="MOVE_EAST\n[r=-1]", color=red, fontcolor=red];
+
+    // -------------------------------------------------------
+    // Transitions FROM  S_2_0_L
+    //   MOVE_SOUTH  -> S_2_0_L  (wall-loop)
+    //   MOVE_WEST   -> S_2_0_L  (wall-loop)
+    //   MOVE_NORTH  -> S_1_0_L
+    //   MOVE_EAST   -> T_LAVA_2_1_L  (lava, terminal)
+    // -------------------------------------------------------
+    S_2_0_L -> S_2_0_L      [label="MOVE_SOUTH\n(wall-loop)"];
+    S_2_0_L -> S_2_0_L      [label="MOVE_WEST\n(wall-loop)"];
+    S_2_0_L -> S_1_0_L      [label="MOVE_NORTH"];
+    S_2_0_L -> T_LAVA_2_1_L [label="MOVE_EAST\n[r=-1]", color=red, fontcolor=red];
+
+    // -------------------------------------------------------
+    // Transitions FROM  S_2_0_U
+    //   MOVE_SOUTH  -> S_2_0_U  (wall-loop)
+    //   MOVE_WEST   -> S_2_0_U  (wall-loop)
+    //   MOVE_NORTH  -> S_1_0_U
+    //   MOVE_EAST   -> T_LAVA_2_1_U  (lava, terminal)
+    // -------------------------------------------------------
+    S_2_0_U -> S_2_0_U      [label="MOVE_SOUTH\n(wall-loop)"];
+    S_2_0_U -> S_2_0_U      [label="MOVE_WEST\n(wall-loop)"];
+    S_2_0_U -> S_1_0_U      [label="MOVE_NORTH"];
+    S_2_0_U -> T_LAVA_2_1_U [label="MOVE_EAST\n[r=-1]", color=red, fontcolor=red];
+
+    // -------------------------------------------------------
+    // Transitions FROM  S_1_1_U  — Door tile / UNLOCKED
+    //   MOVE_WEST   -> S_1_0_U
+    //   MOVE_EAST   -> T_GOAL_1_2_U  (goal, terminal)
+    //   MOVE_NORTH  -> T_LAVA_0_1_U  (lava, terminal)
+    //   MOVE_SOUTH  -> T_LAVA_2_1_U  (lava, terminal)
+    // -------------------------------------------------------
+    S_1_1_U -> S_1_0_U      [label="MOVE_WEST"];
+    S_1_1_U -> T_GOAL_1_2_U [label="MOVE_EAST\n[r=+1]", color=darkgreen, fontcolor=darkgreen];
+    S_1_1_U -> T_LAVA_0_1_U [label="MOVE_NORTH\n[r=-1]", color=red, fontcolor=red];
+    S_1_1_U -> T_LAVA_2_1_U [label="MOVE_SOUTH\n[r=-1]", color=red, fontcolor=red];
+
+    // -------------------------------------------------------
+    // Rank groupings for left-to-right layout clarity
+    // -------------------------------------------------------
+    { rank=same; S_0_0_L; S_0_0_U; }
+    { rank=same; S_1_0_L; S_1_0_U; }
+    { rank=same; S_2_0_L; S_2_0_U; }
+    { rank=same; S_1_1_U; }
+    { rank=same; T_LAVA_0_1_L; T_LAVA_0_1_U; T_GOAL_1_2_U; T_LAVA_2_1_L; T_LAVA_2_1_U; }
+}

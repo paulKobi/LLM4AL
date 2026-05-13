@@ -1,0 +1,179 @@
+digraph LavaCrossing_FSM {
+    // Graph attributes
+    graph [
+        rankdir=LR,
+        fontname="Helvetica",
+        label="RFC-GW01 Lava Crossing FSM\n(reachable states only; door_status in each node label)",
+        labelloc=t,
+        fontsize=14,
+        splines=true,
+        nodesep=0.4,
+        ranksep=1.2
+    ];
+    node [fontname="Helvetica", fontsize=10, shape=ellipse];
+    edge [fontname="Helvetica", fontsize=9];
+
+    // Start arrow
+    __start__ [shape=point, width=0.15, style=filled, fillcolor=black];
+    __start__ -> r2c0_L [style=bold];
+
+    // Node declarations
+    GOAL [label="GOAL", shape=doublecircle, style=filled, fillcolor=limegreen, color=darkgreen, fontcolor=white, penwidth=2];
+    LAVA [label="LAVA", shape=doublecircle, style=filled, fillcolor=crimson, color=darkred, fontcolor=white, penwidth=2];
+    r0c0_L [label="(0,0)\ndoor:LOCKED", style=filled, fillcolor=lightyellow];
+    r0c0_U [label="(0,0)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r0c1_L [label="(0,1)\ndoor:LOCKED", style=filled, fillcolor=lightyellow];
+    r0c1_U [label="(0,1)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r0c3_U [label="(0,3)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r0c4_U [label="(0,4)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r1c0_L [label="(1,0)\ndoor:LOCKED", style=filled, fillcolor=lightyellow];
+    r1c0_U [label="(1,0)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r1c1_L [label="(1,1)\ndoor:LOCKED", style=filled, fillcolor=lightyellow];
+    r1c1_U [label="(1,1)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r1c3_U [label="(1,3)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r1c4_U [label="(1,4)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r2c0_L [label="(2,0)\ndoor:LOCKED", shape=ellipse, style="bold,filled", fillcolor=lightyellow, color=black, penwidth=2];
+    r2c0_U [label="(2,0)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r2c1_L [label="(2,1)\ndoor:LOCKED", style=filled, fillcolor=lightyellow];
+    r2c1_U [label="(2,1)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r2c2_U [label="(2,2)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r2c3_U [label="(2,3)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r3c0_L [label="(3,0)\ndoor:LOCKED", style=filled, fillcolor=lightyellow];
+    r3c0_U [label="(3,0)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r3c1_L [label="(3,1)\ndoor:LOCKED", style=filled, fillcolor=lightyellow];
+    r3c1_U [label="(3,1)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r3c3_U [label="(3,3)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r3c4_U [label="(3,4)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r4c0_L [label="(4,0)\ndoor:LOCKED", style=filled, fillcolor=lightyellow];
+    r4c0_U [label="(4,0)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r4c1_L [label="(4,1)\ndoor:LOCKED", style=filled, fillcolor=lightyellow];
+    r4c1_U [label="(4,1)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r4c3_U [label="(4,3)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+    r4c4_U [label="(4,4)\ndoor:UNLOCKED", style=filled, fillcolor=lightblue];
+
+    // Transitions (reachable states only)
+    r0c0_L -> r0c1_L [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c0_L -> r0c0_L [label="N", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r0c0_L -> r1c0_L [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c0_L -> r0c0_L [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r0c0_U -> r0c1_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c0_U -> r0c0_U [label="N", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r0c0_U -> r1c0_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c0_U -> r0c0_U [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r0c1_L -> LAVA [label="E [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r0c1_L -> r0c1_L [label="N", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r0c1_L -> r1c1_L [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c1_L -> r0c0_L [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c1_U -> LAVA [label="E [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r0c1_U -> r0c1_U [label="N", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r0c1_U -> r1c1_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c1_U -> r0c0_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c3_U -> r0c4_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c3_U -> r0c3_U [label="N", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r0c3_U -> r1c3_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c3_U -> LAVA [label="W [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r0c4_U -> r0c4_U [label="E", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r0c4_U -> r0c4_U [label="N", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r0c4_U -> r1c4_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r0c4_U -> r0c3_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c0_L -> r1c1_L [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c0_L -> r0c0_L [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c0_L -> r2c0_L [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c0_L -> r1c0_L [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r1c0_U -> r1c1_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c0_U -> r0c0_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c0_U -> r2c0_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c0_U -> r1c0_U [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r1c1_L -> LAVA [label="E [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r1c1_L -> r0c1_L [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c1_L -> r2c1_L [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c1_L -> r1c0_L [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c1_U -> LAVA [label="E [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r1c1_U -> r0c1_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c1_U -> r2c1_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c1_U -> r1c0_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c3_U -> r1c4_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c3_U -> r0c3_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c3_U -> r2c3_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c3_U -> LAVA [label="W [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r1c4_U -> r1c4_U [label="E", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r1c4_U -> r0c4_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r1c4_U -> GOAL [label="S [r=+1]", color=darkgreen, fontcolor=darkgreen, style=solid, weight=1];
+    r1c4_U -> r1c3_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c0_L -> r2c1_L [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c0_L -> r1c0_L [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c0_L -> r3c0_L [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c0_L -> r2c0_L [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r2c0_U -> r2c1_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c0_U -> r1c0_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c0_U -> r3c0_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c0_U -> r2c0_U [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r2c1_L -> r2c1_L [label="KEY_FAIL", color=darkorange, fontcolor=darkorange, style=dashed, weight=0];
+    r2c1_L -> r2c1_U [label="KEY_OK", color=royalblue, fontcolor=royalblue, style=solid, weight=1];
+    r2c1_L -> r2c1_L [label="E", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r2c1_L -> r1c1_L [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c1_L -> r3c1_L [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c1_L -> r2c0_L [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c1_U -> r2c1_L [label="KEY_FAIL", color=darkorange, fontcolor=darkorange, style=solid, weight=1];
+    r2c1_U -> r2c1_U [label="KEY_OK", color=royalblue, fontcolor=royalblue, style=dashed, weight=0];
+    r2c1_U -> r2c2_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c1_U -> r1c1_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c1_U -> r3c1_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c1_U -> r2c0_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c2_U -> r2c3_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c2_U -> LAVA [label="N [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r2c2_U -> LAVA [label="S [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r2c2_U -> r2c1_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c3_U -> GOAL [label="E [r=+1]", color=darkgreen, fontcolor=darkgreen, style=solid, weight=1];
+    r2c3_U -> r1c3_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c3_U -> r3c3_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r2c3_U -> r2c2_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c0_L -> r3c1_L [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c0_L -> r2c0_L [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c0_L -> r4c0_L [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c0_L -> r3c0_L [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r3c0_U -> r3c1_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c0_U -> r2c0_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c0_U -> r4c0_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c0_U -> r3c0_U [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r3c1_L -> LAVA [label="E [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r3c1_L -> r2c1_L [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c1_L -> r4c1_L [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c1_L -> r3c0_L [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c1_U -> LAVA [label="E [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r3c1_U -> r2c1_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c1_U -> r4c1_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c1_U -> r3c0_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c3_U -> r3c4_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c3_U -> r2c3_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c3_U -> r4c3_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c3_U -> LAVA [label="W [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r3c4_U -> r3c4_U [label="E", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r3c4_U -> GOAL [label="N [r=+1]", color=darkgreen, fontcolor=darkgreen, style=solid, weight=1];
+    r3c4_U -> r4c4_U [label="S", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r3c4_U -> r3c3_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c0_L -> r4c1_L [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c0_L -> r3c0_L [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c0_L -> r4c0_L [label="S", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r4c0_L -> r4c0_L [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r4c0_U -> r4c1_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c0_U -> r3c0_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c0_U -> r4c0_U [label="S", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r4c0_U -> r4c0_U [label="W", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r4c1_L -> LAVA [label="E [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r4c1_L -> r3c1_L [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c1_L -> r4c1_L [label="S", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r4c1_L -> r4c0_L [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c1_U -> LAVA [label="E [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r4c1_U -> r3c1_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c1_U -> r4c1_U [label="S", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r4c1_U -> r4c0_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c3_U -> r4c4_U [label="E", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c3_U -> r3c3_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c3_U -> r4c3_U [label="S", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r4c3_U -> LAVA [label="W [r=-1]", color=crimson, fontcolor=crimson, style=solid, weight=1];
+    r4c4_U -> r4c4_U [label="E", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r4c4_U -> r3c4_U [label="N", color=gray30, fontcolor=gray30, style=solid, weight=1];
+    r4c4_U -> r4c4_U [label="S", color=gray30, fontcolor=gray30, style=dashed, weight=0];
+    r4c4_U -> r4c3_U [label="W", color=gray30, fontcolor=gray30, style=solid, weight=1];
+}
