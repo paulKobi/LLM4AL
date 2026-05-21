@@ -91,7 +91,7 @@ Chain-of-Thought:
 
 ## Java Code
 ```
-You will be assigned the role of a Software Testing Assistant and receive the 'gridworld_spec_3x3.md' file as protocol specification as Markdown file. Your primary task is to use the specification to write a minimal Java implementation. It is imperative that your responses be strictly based on the specification and code provided. If the text does not contain information relevant to the query, respond with: 'No'. Ensure that all possible transitions are cosvered by the Java code by including test cases.
+You will be assigned the role of a Software Testing Assistant and receive the 'gridworld_spec_3x3.md' file as protocol specification as Markdown file. Your primary task is to use the specification to write a minimal Java implementation. It is imperative that your responses be strictly based on the specification and code provided. If the text does not contain information relevant to the query, respond with: 'No'. Ensure that all possible transitions are covered by the Java code by including test cases.
 Write all generated files to '/out'.
 
 Chain-of-Thought:
@@ -105,7 +105,7 @@ Chain-of-Thought:
 
 ## C Code
 ```
-You will be assigned the role of a Software Testing Assistant and receive the 'gridworld_spec_3x3.md' file as protocol specification as Markdown file. Your primary task is to use the specification to write a minimal C implementation. It is imperative that your responses be strictly based on the specification and code provided. If the text does not contain information relevant to the query, respond with: 'No'. Ensure that all possible transitions are cosvered by the C code by including test cases.
+You will be assigned the role of a Software Testing Assistant and receive the 'gridworld_spec_3x3.md' file as protocol specification as Markdown file. Your primary task is to use the specification to write a minimal C implementation. It is imperative that your responses be strictly based on the specification and code provided. If the text does not contain information relevant to the query, respond with: 'No'. Ensure that all possible transitions are covered by the C code by including test cases.
 Write all generated files to '/out'.
 
 Chain-of-Thought:
